@@ -1,10 +1,13 @@
-import obelisk from 'obelisk.js';
+// eslint-disable-next-line import/no-unresolved
+import Isomer from 'isomer';
+import { orderBy } from 'lodash';
 import { CONFIG } from '../config';
 import { ConfigLineObject } from '../view/utils/specification';
 import { RenderContext } from './renderContext';
 import { createFloor } from '../view/objects/floor';
-import { normalizeNumber } from './utils/number';
-import {createRoomObject} from "../view/objects/factory";
+import { createRoomObject } from '../view/objects/factory';
+import { getTwoPointsDistance } from './utils/math';
+
 // @ts-ignore
 type RenderParams = {
   roomOptions: {
@@ -32,20 +35,20 @@ export class Simulation {
       return;
     }
     this.renderContext.clear();
+
     this.previousRenderParams = params;
-    const point = new obelisk.Point(
-      this.renderContext.getWidth() / 2,
-      this.renderContext.getHeight() / 2 -
-        normalizeNumber(params.roomOptions.height) / 2
-    );
-    const pixelView = new obelisk.PixelView(
-      this.renderContext.getCanvas(),
-      point
-    );
-    createFloor(pixelView, {
+    const iso = new Isomer(this.renderContext.getCanvas());
+    createFloor(iso, {
       width: params.roomOptions.width,
       length: params.roomOptions.length,
     });
-    params.objects.forEach(item => createRoomObject(pixelView, item))
+    const sortedObjects = orderBy(params.objects, ({ options }) =>
+      getTwoPointsDistance(
+        { x: 0, y: 0, z: 0 },
+        { x: options.x, y: options.y, z: options.z }
+      )
+    , ['desc']);
+    console.log(sortedObjects);
+    sortedObjects.forEach((item) => createRoomObject(iso, item));
   }
 }

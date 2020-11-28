@@ -1,8 +1,9 @@
-import obelisk from 'obelisk.js';
+// @ts-ignore
+import  {Shape, Point, Color} from 'isomer'
 import { normalizeNumber } from '../../simulation/utils/number';
 
 export function createPyramid(
-  pixelView: obelisk.PixelView,
+  iso: any,
   params: {
     width: number;
     length: number;
@@ -12,17 +13,18 @@ export function createPyramid(
     z: number;
   }
 ) {
-  const pyramidColor = new obelisk.PyramidColor();
-  const dimensionPyramid = new obelisk.PyramidDimension(
-    normalizeNumber(params.height), true
-  );
-  const pyramid = new obelisk.Pyramid(dimensionPyramid, pyramidColor);
-  pixelView.renderObject(
-    pyramid,
-    new obelisk.Point3D(
-      normalizeNumber(params.x),
-      normalizeNumber(params.y),
-      normalizeNumber(params.z)
-    )
-  );
+    const color = new Color(204, 30, 190, 1);
+    iso.add(
+        Shape.Pyramid(
+            new Point(
+                normalizeNumber(params.x),
+                normalizeNumber(params.y),
+                normalizeNumber(params.z)
+            ),
+            normalizeNumber(params.length),
+            normalizeNumber(params.length),
+            normalizeNumber(params.height)
+        ),
+        color
+    );
 }
