@@ -127,6 +127,8 @@ export class AppView extends Component<State> {
         return obj.options.width * obj.options.height * obj.options.length;
       case ConfigObjectTypes.PYRAMID:
         return (1 / 3) * obj.options.length ** 2 * obj.options.height;
+      case ConfigObjectTypes.SPHERE:
+        return (4 / 3) * Math.PI * (obj.options.length / 2) ** 3;
       default:
         return 0;
     }
