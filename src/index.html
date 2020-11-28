@@ -10,32 +10,8 @@
   <title>Challenge</title>
 </head>
 <body>
-<div class="root root--loading js-root">
-  <nav class="nav">
-    <button class="nav__action-button nav__start js-start" title="Start"><i class="las la-play"></i></button>
-    <button class="nav__action-button nav__stop js-pause" title="Pause"><i class="las la-pause"></i></button>
-    <div class="nav__simulation-speed">
-      <span>Simulation speed: </span>
-      <input type="number" class="js-speed-input">
-    </div>
-    <div class="nav__indicator nav__indicator--fixed" title="Speed">
-      <i class="nav__indicator-icon las la-tachometer-alt"> </i>
-      <span class="js-speed-indicator">0</span>
-    </div>
-    <div class="nav__indicator nav__indicator--fixed" title="Angle">
-      <i class="nav__indicator-icon las la-drafting-compass"></i>
-      <span><span class="js-angle-indicator">0</span>°</span>
-    </div>
-    <div class="nav__indicator" title="Distance">
-      <i class="nav__indicator-icon las la-map-marker"></i>
-      <span><span class="js-distance-indicator">0</span>px</span>
-    </div>
-  </nav>
-
-  <div class="mover js-mover"></div>
-  <div class="arrow js-arrow">
-    <div class="arrow__head js-arrow-head"></div>
-  </div>
+<div class="root js-root">
+  <input type="file" class="spec-input js-spec-input">
   <canvas class="canvas js-canvas" width="800" height="500"></canvas>
 </div>
 </body>

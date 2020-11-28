@@ -14,6 +14,8 @@ module.exports = {
     'import/prefer-default-export': 0,
     'no-console': 0,
     'class-methods-use-this': 0,
+    'no-plusplus': 0,
+    'default-case': 0,
     'import/extensions': 0,
     'no-unused-vars': 0,
     '@typescript-eslint/no-unused-vars': 'error',

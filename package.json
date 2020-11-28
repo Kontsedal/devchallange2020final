@@ -36,5 +36,10 @@
     "webpack-merge": "^5.2.0",
     "sass": "^1.28.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@types/obelisk.js": "^1.2.0",
+    "babylonjs": "^4.2.0",
+    "isomer": "^0.2.6",
+    "obelisk.js": "^1.2.2"
+  }
 }
