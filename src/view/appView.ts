@@ -62,10 +62,10 @@ export class AppView extends Component<State> {
     this.render();
   }
 
-  setSpec(specString: string) {
+  async setSpec(specString: string) {
     let spec: ConfigLineObject[];
     try {
-      spec = parseSpecification(specString);
+      spec = await parseSpecification(specString);
     } catch (error) {
       this.setState({
         errors: [`Failed to parse spec text. Error: ${JSON.stringify(error)}`],

@@ -1,3 +1,13 @@
+import * as yup from 'yup';
+
+const roomSchema = yup.object().shape({
+  options: yup.object().shape({
+    width: yup.number().required().positive().integer(),
+    height: yup.number().required().positive().integer(),
+    length: yup.number().required().positive().integer(),
+  })
+});
+
 export enum ConfigObjectTypes {
   CUBOID = 'cuboid',
   PYRAMID = 'square-pyramid',
@@ -15,15 +25,19 @@ export type ConfigLineObject = {
   };
 };
 
-export const parseSpecification = (
+export const parseSpecification = async (
   specificationText: string
-): ConfigLineObject[] => {
+): Promise<ConfigLineObject[]> => {
   const normalizedText = specificationText.replace(/\s+/, ' ');
   const dataArray = normalizedText.split(/\n/);
   const paramsArray = dataArray.map((line) => line.split(' '));
-  return paramsArray
+  const result = paramsArray
     .map(parseConfigLine)
     .filter((item) => !!item) as ConfigLineObject[];
+
+  const room = result.find((item) => item.type === ConfigObjectTypes.ROOM);
+  await roomSchema.validate(room, { abortEarly: false });
+  return result;
 };
 
 function parseConfigLine(paramsArray: string[]): ConfigLineObject | void {
@@ -45,7 +59,7 @@ function parseConfigLine(paramsArray: string[]): ConfigLineObject | void {
   if (!(Object.values(ConfigObjectTypes) as string[]).includes(objectType)) {
     return;
   }
-  if(typeof options.length === "undefined") {
+  if (typeof options.length === 'undefined') {
     options.length = options.width;
   }
   return {
