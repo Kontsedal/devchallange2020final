@@ -14,7 +14,8 @@ type State = {
 };
 
 const SELECTORS = {
-  specInput: '.js-spec-input'
+  specInput: '.js-spec-input',
+  totalVolume: '.js-total-volume',
 } as const;
 
 export class AppView extends Component<State> {
@@ -86,6 +87,8 @@ export class AppView extends Component<State> {
   }
 
   render() {
-
+    this.effect(() => {
+      this.elements.totalVolume.element.innerText = String(this.state.roomOptions.width * this.state.roomOptions.height)
+    }, ['roomOptions'])
   }
 }

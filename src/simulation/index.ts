@@ -1,4 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
+// @ts-ignore
 import Isomer from 'isomer';
 import { orderBy } from 'lodash';
 import { CONFIG } from '../config';

@@ -25,9 +25,10 @@ html, body {
 }
 
 
-.spec-input {
+.controls {
   position: absolute;
   left: 0;
   top: 0;
+  width: 100px;
   z-index: 2;
 }
