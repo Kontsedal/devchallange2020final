@@ -7,7 +7,7 @@ import {
   ConfigObjectTypes,
   parseSpecification,
 } from './utils/specification';
-import {hasWallsCollision} from "../simulation/utils/collision";
+import {hasWallsCollision, isGonnaFall} from "../simulation/utils/collision";
 
 type State = {
   roomOptions: {
@@ -69,6 +69,9 @@ export class AppView extends Component<State> {
       if(hasWallsCollision({object: obj, room: room.options})) {
         errors.push(`Object of type "${obj.type}"(index #${index}) has collision with the walls`)
       }
+      if(isGonnaFall(obj, objects)) {
+        errors.push(`Object of type "${obj.type}"(index #${index}) has no foundation and will fall`)
+      }
     })
     this.setState({
       roomOptions: room.options,
@@ -121,11 +124,11 @@ export class AppView extends Component<State> {
           // eslint-disable-next-line no-param-reassign
           event.target.value = "";
         } catch (error) {
-          alert(`Failed to parse file. Error: ${JSON.stringify(error)}`);
+          this.setState({errors: [`Failed to parse file. Error: ${JSON.stringify(error)}`]})
         }
       };
       reader.onerror = () => {
-        alert('Error reading file');
+        alert('Error of a file reading');
       };
     });
   }
@@ -147,7 +150,7 @@ export class AppView extends Component<State> {
 
     this.effect(() => {
       this.elements.errors.element.innerHTML = String(
-          this.state.errors.map(error => `<p>${error}</p>`)
+          this.state.errors.map(error => `<p>${error}</p>`).join('')
       );
     }, ['errors']);
   }

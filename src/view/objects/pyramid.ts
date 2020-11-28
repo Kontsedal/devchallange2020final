@@ -13,7 +13,7 @@ export function createPyramid(
     z: number;
   }
 ) {
-    const color = new Color(204, 30, 190, 0.9);
+    const color = new Color(204, 30, 190, 0.7);
     iso.add(
         Shape.Pyramid(
             new Point(

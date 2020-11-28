@@ -1,9 +1,8 @@
-// eslint-disable-next-line import/no-unresolved
 // @ts-ignore
 import Isomer from 'isomer';
 import { orderBy } from 'lodash';
 import { CONFIG } from '../config';
-import {ConfigLineObject, ConfigObjectTypes} from '../view/utils/specification';
+import {ConfigLineObject} from '../view/utils/specification';
 import { RenderContext } from './renderContext';
 import { createFloor } from '../view/objects/floor';
 import { createRoomObject } from '../view/objects/factory';
@@ -46,11 +45,10 @@ export class Simulation {
     });
     const sortedObjects = orderBy(params.objects, ({ options }) =>
       getTwoPointsDistance(
-        { x: 0, y: 0, z: 0 },
+        { x: 0, y: 0, z: 100 },
         { x: options.x, y: options.y, z: options.z }
       )
     , ['desc']);
-    console.log(sortedObjects);
     sortedObjects.forEach((item) => createRoomObject(iso, item));
   }
 }

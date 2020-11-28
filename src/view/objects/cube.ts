@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Shape, Point, Color } from 'isomer';
 import { normalizeNumber } from '../../simulation/utils/number';
 
@@ -12,7 +13,7 @@ export function createCube(
     z: number;
   }
 ) {
-  const color = new Color(30, 204, 164, 0.9);
+  const color = new Color(30, 204, 164, 0.7);
   iso.add(
     Shape.Prism(
       new Point(
