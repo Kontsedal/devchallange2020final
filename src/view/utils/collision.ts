@@ -1,7 +1,7 @@
 import {
   ConfigLineObject,
   ConfigObjectTypes,
-} from '../../view/utils/specification';
+} from './specification';
 
 export const hasWallsCollision = (params: {
   object: ConfigLineObject;
@@ -44,6 +44,9 @@ export const isGonnaFall = (
   if(target.options.z === 0) {
     return false
   }
+  if(getCollisions(target, objects).length) {
+    return false
+  }
   return !hasFoundationObject(target, objects)
 };
 
@@ -77,3 +80,30 @@ export const hasFoundationObject = (
   });
   return result;
 };
+
+export const getCollisions = (target: ConfigLineObject, objects: ConfigLineObject[]) => {
+  const collisions: ConfigLineObject[] = [];
+  objects.filter(item => item !== target).forEach(obj => {
+    if(hasCollision(target, obj)) {
+      collisions.push(obj)
+    }
+  })
+  return collisions;
+}
+
+export const hasCollision = (target: ConfigLineObject, object: ConfigLineObject) => {
+  const targetRight = target.options.x + target.options.width;
+  const targetDepth = target.options.y + target.options.length;
+  const targetHeight = target.options.x + target.options.height;
+  const objectRight = object.options.x + object.options.width;
+  const objectDepth = object.options.y + object.options.length;
+  const objectHeight = object.options.z + object.options.height;
+  return !(
+      target.options.x >= objectRight ||
+      target.options.y >= objectDepth ||
+      targetRight <= object.options.x ||
+      targetDepth <= object.options.y ||
+      target.options.z >= objectHeight ||
+      targetHeight <= object.options.z
+  )
+}

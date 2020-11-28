@@ -7,6 +7,7 @@ import { RenderContext } from './renderContext';
 import { createFloor } from '../view/objects/floor';
 import { createRoomObject } from '../view/objects/factory';
 import { getTwoPointsDistance } from './utils/math';
+import {createWalls} from "../view/objects/walls";
 
 // @ts-ignore
 type RenderParams = {
@@ -39,10 +40,7 @@ export class Simulation {
 
     this.previousRenderParams = params;
     const iso = new Isomer(this.renderContext.getCanvas());
-    createFloor(iso, {
-      width: params.roomOptions.width,
-      length: params.roomOptions.length,
-    });
+    createFloor(iso, params.roomOptions);
     const sortedObjects = orderBy(params.objects, ({ options }) =>
       getTwoPointsDistance(
         { x: 0, y: 0, z: 100 },
@@ -50,5 +48,6 @@ export class Simulation {
       )
     , ['desc']);
     sortedObjects.forEach((item) => createRoomObject(iso, item));
+    createWalls(iso, params.roomOptions);
   }
 }

@@ -8,7 +8,7 @@ export type ConfigLineObject = {
   options: {
     width: number;
     height: number;
-    length: 0;
+    length: number;
     x: number;
     y: number;
     z: number;
@@ -37,13 +37,16 @@ function parseConfigLine(paramsArray: string[]): ConfigLineObject | void {
   }, {}) as {
     width: number;
     height: number;
-    length: 0;
+    length: number;
     x: number;
     y: number;
     z: number;
   };
   if (!(Object.values(ConfigObjectTypes) as string[]).includes(objectType)) {
     return;
+  }
+  if(typeof options.length === "undefined") {
+    options.length = options.width;
   }
   return {
     type: objectType,

@@ -7,7 +7,7 @@ import {
   ConfigObjectTypes,
   parseSpecification,
 } from './utils/specification';
-import { hasWallsCollision, isGonnaFall } from '../simulation/utils/collision';
+import {getCollisions, hasWallsCollision, isGonnaFall} from './utils/collision';
 
 type State = {
   roomOptions: {
@@ -88,6 +88,12 @@ export class AppView extends Component<State> {
         errors.push(
           `Object of type "${obj.type}"(index #${index}) has no foundation and will fall`
         );
+      }
+
+      const collisions = getCollisions(obj, objects);
+      if(collisions.length) {
+        const collisionsString = collisions.map(collisionObj => collisionObj.type).join(',')
+        errors.push( `Object of type "${obj.type}"(index #${index}) has collisions with next objects: ${collisionsString}`)
       }
     });
     this.setState({
