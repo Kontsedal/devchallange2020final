@@ -7,7 +7,7 @@ import {
   ConfigObjectTypes,
   parseSpecification,
 } from './utils/specification';
-import {hasWallsCollision, isGonnaFall} from "../simulation/utils/collision";
+import { hasWallsCollision, isGonnaFall } from '../simulation/utils/collision';
 
 type State = {
   roomOptions: {
@@ -16,7 +16,8 @@ type State = {
     length: number;
   };
   objects: ConfigLineObject[];
-  errors: string[]
+  errors: string[];
+  specification: string;
 };
 
 const SELECTORS = {
@@ -24,6 +25,7 @@ const SELECTORS = {
   totalVolume: '.js-total-volume',
   objectsVolume: '.js-objects-volume',
   errors: '.js-errors',
+  specification: '.js-specification',
 } as const;
 
 export class AppView extends Component<State> {
@@ -42,7 +44,8 @@ export class AppView extends Component<State> {
         length: 20,
       },
       objects: [],
-      errors: []
+      errors: [],
+      specification: '',
     });
     this.simulation = simulation;
   }
@@ -54,7 +57,17 @@ export class AppView extends Component<State> {
     this.render();
   }
 
-  setSpec(spec: ConfigLineObject[]) {
+  setSpec(specString: string) {
+    let spec: ConfigLineObject[];
+    try {
+      spec = parseSpecification(specString);
+    } catch (error) {
+      this.setState({
+        errors: [`Failed to parse spec text. Error: ${JSON.stringify(error)}`]
+      });
+      return;
+    }
+
     const room = spec.find((item) => item.type === ConfigObjectTypes.ROOM) as {
       type: ConfigObjectTypes.ROOM;
       options: {
@@ -66,17 +79,22 @@ export class AppView extends Component<State> {
     const objects = spec.filter((item) => item.type !== ConfigObjectTypes.ROOM);
     const errors: string[] = [];
     objects.forEach((obj, index) => {
-      if(hasWallsCollision({object: obj, room: room.options})) {
-        errors.push(`Object of type "${obj.type}"(index #${index}) has collision with the walls`)
+      if (hasWallsCollision({ object: obj, room: room.options })) {
+        errors.push(
+          `Object of type "${obj.type}"(index #${index}) has collision with the walls`
+        );
       }
-      if(isGonnaFall(obj, objects)) {
-        errors.push(`Object of type "${obj.type}"(index #${index}) has no foundation and will fall`)
+      if (isGonnaFall(obj, objects)) {
+        errors.push(
+          `Object of type "${obj.type}"(index #${index}) has no foundation and will fall`
+        );
       }
-    })
+    });
     this.setState({
       roomOptions: room.options,
       objects,
-      errors
+      errors,
+      specification: specString
     });
     this.renderSimulation();
   }
@@ -116,21 +134,21 @@ export class AppView extends Component<State> {
       const reader = new FileReader();
       reader.readAsText(file, 'UTF-8');
       reader.onload = (evt) => {
-        try {
           if (!evt.target) {
             return;
           }
-          this.setSpec(parseSpecification(evt.target.result as string));
+          this.setSpec(evt.target.result as string);
           // eslint-disable-next-line no-param-reassign
-          event.target.value = "";
-        } catch (error) {
-          this.setState({errors: [`Failed to parse file. Error: ${JSON.stringify(error)}`]})
-        }
+          event.target.value = '';
       };
       reader.onerror = () => {
         alert('Error of a file reading');
       };
     });
+
+    this.elements.specification.on('keyup', (event) => {
+      this.setSpec(event.target.value)
+    })
   }
 
   render() {
@@ -150,8 +168,13 @@ export class AppView extends Component<State> {
 
     this.effect(() => {
       this.elements.errors.element.innerHTML = String(
-          this.state.errors.map(error => `<p>${error}</p>`).join('')
+        this.state.errors.map((error) => `<p>${error}</p>`).join('')
       );
     }, ['errors']);
+
+    this.effect(() => {
+      (this.elements.specification
+        .element as HTMLTextAreaElement).value = this.state.specification;
+    }, ['specification']);
   }
 }
