@@ -34,7 +34,14 @@ function parseConfigLine(paramsArray: string[]): ConfigLineObject | void {
     }
     const paramArray = param.split('=');
     return { ...result, [paramArray[0]]: Number(paramArray[1]) };
-  }, {});
+  }, {}) as {
+    width: number;
+    height: number;
+    length: 0;
+    x: number;
+    y: number;
+    z: number;
+  };
   if (!(Object.values(ConfigObjectTypes) as string[]).includes(objectType)) {
     return;
   }

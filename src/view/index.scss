@@ -32,3 +32,15 @@ html, body {
   width: 200px;
   z-index: 2;
 }
+
+.errors-container {
+
+  .errors {
+    color: tomato;
+    font-weight: bold;
+    border: 1px solid tomato;
+    height: 100px;
+    overflow-y: auto;
+    font-size: 12px;
+  }
+}

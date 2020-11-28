@@ -7,6 +7,7 @@ import {
   ConfigObjectTypes,
   parseSpecification,
 } from './utils/specification';
+import {hasWallsCollision} from "../simulation/utils/collision";
 
 type State = {
   roomOptions: {
@@ -15,12 +16,14 @@ type State = {
     length: number;
   };
   objects: ConfigLineObject[];
+  errors: string[]
 };
 
 const SELECTORS = {
   specInput: '.js-spec-input',
   totalVolume: '.js-total-volume',
   objectsVolume: '.js-objects-volume',
+  errors: '.js-errors',
 } as const;
 
 export class AppView extends Component<State> {
@@ -39,6 +42,7 @@ export class AppView extends Component<State> {
         length: 20,
       },
       objects: [],
+      errors: []
     });
     this.simulation = simulation;
   }
@@ -60,9 +64,16 @@ export class AppView extends Component<State> {
       };
     };
     const objects = spec.filter((item) => item.type !== ConfigObjectTypes.ROOM);
+    const errors: string[] = [];
+    objects.forEach((obj, index) => {
+      if(hasWallsCollision({object: obj, room: room.options})) {
+        errors.push(`Object of type "${obj.type}"(index #${index}) has collision with the walls`)
+      }
+    })
     this.setState({
       roomOptions: room.options,
       objects,
+      errors
     });
     this.renderSimulation();
   }
@@ -86,10 +97,9 @@ export class AppView extends Component<State> {
   }
 
   getObjectsVolume() {
-    return this.state.objects.reduce(
-      (result, obj) => result + this.getObjectVolume(obj),
-      0
-    ).toFixed(0);
+    return this.state.objects
+      .reduce((result, obj) => result + this.getObjectVolume(obj), 0)
+      .toFixed(0);
   }
 
   attachEventListeners() {
@@ -104,7 +114,12 @@ export class AppView extends Component<State> {
       reader.readAsText(file, 'UTF-8');
       reader.onload = (evt) => {
         try {
+          if (!evt.target) {
+            return;
+          }
           this.setSpec(parseSpecification(evt.target.result as string));
+          // eslint-disable-next-line no-param-reassign
+          event.target.value = "";
         } catch (error) {
           alert(`Failed to parse file. Error: ${JSON.stringify(error)}`);
         }
@@ -129,5 +144,11 @@ export class AppView extends Component<State> {
         this.getObjectsVolume()
       );
     }, ['objects']);
+
+    this.effect(() => {
+      this.elements.errors.element.innerHTML = String(
+          this.state.errors.map(error => `<p>${error}</p>`)
+      );
+    }, ['errors']);
   }
 }
