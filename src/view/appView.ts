@@ -7,7 +7,11 @@ import {
   ConfigObjectTypes,
   parseSpecification,
 } from './utils/specification';
-import {getCollisions, hasWallsCollision, isGonnaFall} from './utils/collision';
+import {
+  getCollisions,
+  hasWallsCollision,
+  isGonnaFall,
+} from './utils/collision';
 
 type State = {
   roomOptions: {
@@ -26,6 +30,7 @@ const SELECTORS = {
   objectsVolume: '.js-objects-volume',
   errors: '.js-errors',
   specification: '.js-specification',
+  freeVolume: '.js-free-volume',
 } as const;
 
 export class AppView extends Component<State> {
@@ -63,7 +68,7 @@ export class AppView extends Component<State> {
       spec = parseSpecification(specString);
     } catch (error) {
       this.setState({
-        errors: [`Failed to parse spec text. Error: ${JSON.stringify(error)}`]
+        errors: [`Failed to parse spec text. Error: ${JSON.stringify(error)}`],
       });
       return;
     }
@@ -91,16 +96,20 @@ export class AppView extends Component<State> {
       }
 
       const collisions = getCollisions(obj, objects);
-      if(collisions.length) {
-        const collisionsString = collisions.map(collisionObj => collisionObj.type).join(',')
-        errors.push( `Object of type "${obj.type}"(index #${index}) has collisions with next objects: ${collisionsString}`)
+      if (collisions.length) {
+        const collisionsString = collisions
+          .map((collisionObj) => collisionObj.type)
+          .join(',');
+        errors.push(
+          `Object of type "${obj.type}"(index #${index}) has collisions with next objects: ${collisionsString}`
+        );
       }
     });
     this.setState({
       roomOptions: room.options,
       objects,
       errors,
-      specification: specString
+      specification: specString,
     });
     this.renderSimulation();
   }
@@ -123,10 +132,13 @@ export class AppView extends Component<State> {
     }
   }
 
-  getObjectsVolume() {
-    return this.state.objects
-      .reduce((result, obj) => result + this.getObjectVolume(obj), 0)
-      .toFixed(0);
+  getObjectsVolume(): number {
+    return Math.floor(
+      this.state.objects.reduce(
+        (result, obj) => result + this.getObjectVolume(obj),
+        0
+      )
+    );
   }
 
   attachEventListeners() {
@@ -140,12 +152,12 @@ export class AppView extends Component<State> {
       const reader = new FileReader();
       reader.readAsText(file, 'UTF-8');
       reader.onload = (evt) => {
-          if (!evt.target) {
-            return;
-          }
-          this.setSpec(evt.target.result as string);
-          // eslint-disable-next-line no-param-reassign
-          event.target.value = '';
+        if (!evt.target) {
+          return;
+        }
+        this.setSpec(evt.target.result as string);
+        // eslint-disable-next-line no-param-reassign
+        event.target.value = '';
       };
       reader.onerror = () => {
         alert('Error of a file reading');
@@ -153,16 +165,22 @@ export class AppView extends Component<State> {
     });
 
     this.elements.specification.on('keyup', (event) => {
-      this.setSpec(event.target.value)
-    })
+      this.setSpec(event.target.value);
+    });
+  }
+
+  getRoomVolume() {
+    return (
+      this.state.roomOptions.width *
+      this.state.roomOptions.height *
+      this.state.roomOptions.height
+    );
   }
 
   render() {
     this.effect(() => {
       this.elements.totalVolume.element.innerText = String(
-        this.state.roomOptions.width *
-          this.state.roomOptions.height *
-          this.state.roomOptions.height
+        this.getRoomVolume()
       );
     }, ['roomOptions']);
 
@@ -182,5 +200,11 @@ export class AppView extends Component<State> {
       (this.elements.specification
         .element as HTMLTextAreaElement).value = this.state.specification;
     }, ['specification']);
+
+    this.effect(() => {
+      this.elements.freeVolume.element.innerText = String(
+        this.getRoomVolume() - this.getObjectsVolume()
+      );
+    }, ['roomOptions', 'objects']);
   }
 }
