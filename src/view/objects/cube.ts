@@ -12,7 +12,7 @@ export function createCube(
     z: number;
   }
 ) {
-  const color = new Color(30, 204, 164, 1);
+  const color = new Color(30, 204, 164, 0.9);
   iso.add(
     Shape.Prism(
       new Point(
