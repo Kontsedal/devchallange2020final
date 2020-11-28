@@ -3,7 +3,7 @@
 import Isomer from 'isomer';
 import { orderBy } from 'lodash';
 import { CONFIG } from '../config';
-import { ConfigLineObject } from '../view/utils/specification';
+import {ConfigLineObject, ConfigObjectTypes} from '../view/utils/specification';
 import { RenderContext } from './renderContext';
 import { createFloor } from '../view/objects/floor';
 import { createRoomObject } from '../view/objects/factory';
@@ -30,6 +30,7 @@ export class Simulation {
   init() {
     this.renderContext.onSizeChange(this.render.bind(this));
   }
+
 
   render(params: RenderParams | undefined = this.previousRenderParams) {
     if (!params) {

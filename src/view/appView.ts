@@ -2,20 +2,25 @@ import { Component } from './component';
 import { Simulation } from '../simulation';
 import { EnhancedDomElement, enhanceDom } from './utils/dom';
 import './index.scss';
-import {ConfigLineObject, ConfigObjectTypes, parseSpecification} from "./utils/specification";
+import {
+  ConfigLineObject,
+  ConfigObjectTypes,
+  parseSpecification,
+} from './utils/specification';
 
 type State = {
   roomOptions: {
-    width: number,
-    height: number,
-    length: number
-  },
-  objects: ConfigLineObject[]
+    width: number;
+    height: number;
+    length: number;
+  };
+  objects: ConfigLineObject[];
 };
 
 const SELECTORS = {
   specInput: '.js-spec-input',
   totalVolume: '.js-total-volume',
+  objectsVolume: '.js-objects-volume',
 } as const;
 
 export class AppView extends Component<State> {
@@ -31,9 +36,9 @@ export class AppView extends Component<State> {
       roomOptions: {
         width: 20,
         height: 20,
-        length: 20
+        length: 20,
       },
-      objects: []
+      objects: [],
     });
     this.simulation = simulation;
   }
@@ -41,26 +46,50 @@ export class AppView extends Component<State> {
   async init() {
     this.attachEventListeners();
     await this.simulation.init();
-    this.renderSimulation()
+    this.renderSimulation();
     this.render();
   }
 
-  setSpec(spec:ConfigLineObject[]) {
-    const room = spec.find(item => item.type === ConfigObjectTypes.ROOM) as {type: ConfigObjectTypes.ROOM, options: {
-        width: number,
-        height: number,
-        length: number
-      }}
-    const objects = spec.filter(item => item.type !== ConfigObjectTypes.ROOM);
+  setSpec(spec: ConfigLineObject[]) {
+    const room = spec.find((item) => item.type === ConfigObjectTypes.ROOM) as {
+      type: ConfigObjectTypes.ROOM;
+      options: {
+        width: number;
+        height: number;
+        length: number;
+      };
+    };
+    const objects = spec.filter((item) => item.type !== ConfigObjectTypes.ROOM);
     this.setState({
       roomOptions: room.options,
-      objects
-    })
-    this.renderSimulation()
+      objects,
+    });
+    this.renderSimulation();
   }
 
   renderSimulation() {
-    this.simulation.render({roomOptions: this.state.roomOptions, objects: this.state.objects});
+    this.simulation.render({
+      roomOptions: this.state.roomOptions,
+      objects: this.state.objects,
+    });
+  }
+
+  getObjectVolume(obj: ConfigLineObject) {
+    switch (obj.type) {
+      case ConfigObjectTypes.CUBOID:
+        return obj.options.width * obj.options.height * obj.options.length;
+      case ConfigObjectTypes.PYRAMID:
+        return (1 / 3) * obj.options.length ** 2 * obj.options.height;
+      default:
+        return 0;
+    }
+  }
+
+  getObjectsVolume() {
+    return this.state.objects.reduce(
+      (result, obj) => result + this.getObjectVolume(obj),
+      0
+    ).toFixed(0);
   }
 
   attachEventListeners() {
@@ -70,25 +99,35 @@ export class AppView extends Component<State> {
     });
 
     this.elements.specInput.on('change', (event) => {
-      const file = event.target.files[0]
+      const file = event.target.files[0];
       const reader = new FileReader();
-      reader.readAsText(file, "UTF-8");
+      reader.readAsText(file, 'UTF-8');
       reader.onload = (evt) => {
         try {
-          this.setSpec(parseSpecification(evt.target.result as string))
-        } catch(error) {
-          alert(`Failed to parse file. Error: ${  JSON.stringify(error)}`)
+          this.setSpec(parseSpecification(evt.target.result as string));
+        } catch (error) {
+          alert(`Failed to parse file. Error: ${JSON.stringify(error)}`);
         }
-      }
-      reader.onerror =  () => {
-        alert("Error reading file")
-      }
-    } )
+      };
+      reader.onerror = () => {
+        alert('Error reading file');
+      };
+    });
   }
 
   render() {
     this.effect(() => {
-      this.elements.totalVolume.element.innerText = String(this.state.roomOptions.width * this.state.roomOptions.height)
-    }, ['roomOptions'])
+      this.elements.totalVolume.element.innerText = String(
+        this.state.roomOptions.width *
+          this.state.roomOptions.height *
+          this.state.roomOptions.height
+      );
+    }, ['roomOptions']);
+
+    this.effect(() => {
+      this.elements.objectsVolume.element.innerText = String(
+        this.getObjectsVolume()
+      );
+    }, ['objects']);
   }
 }

@@ -3,7 +3,17 @@ export enum ConfigObjectTypes {
   PYRAMID = 'square-pyramid',
   ROOM = 'room',
 }
-export type ConfigLineObject = { type: ConfigObjectTypes; options: { [key: string]: number } }
+export type ConfigLineObject = {
+  type: ConfigObjectTypes;
+  options: {
+    width: number;
+    height: number;
+    length: 0;
+    x: number;
+    y: number;
+    z: number;
+  };
+};
 
 export const parseSpecification = (
   specificationText: string
@@ -11,12 +21,12 @@ export const parseSpecification = (
   const normalizedText = specificationText.replace(/\s+/, ' ');
   const dataArray = normalizedText.split(/\n/);
   const paramsArray = dataArray.map((line) => line.split(' '));
-  return paramsArray.map(parseConfigLine).filter(item => !!item) as ConfigLineObject[]
+  return paramsArray
+    .map(parseConfigLine)
+    .filter((item) => !!item) as ConfigLineObject[];
 };
 
-function parseConfigLine(
-  paramsArray: string[]
-): ConfigLineObject | void {
+function parseConfigLine(paramsArray: string[]): ConfigLineObject | void {
   const objectType = paramsArray[0] as ConfigObjectTypes;
   const options = paramsArray.reduce((result, param, index) => {
     if (index === 0) {
