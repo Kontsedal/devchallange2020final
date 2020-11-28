@@ -25,15 +25,6 @@ export function createSphere(
   );
   iso.add(
     Shape.Cylinder(
-      Point(x + length / 3, y + length / 3, z),
-      length / 3,
-      24,
-      height
-    ),
-    color
-  );
-  iso.add(
-    Shape.Cylinder(
       Point(x + height * 0.3, y + height * 0.3, z + height * 0.3),
       length / 2.5,
       24,

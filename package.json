@@ -34,17 +34,13 @@
     "webpack-cli": "^4.1.0",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^5.2.0",
-    "sass": "^1.28.0"
+    "sass": "^1.28.0",
+    "@types/lodash": "^4.14.165",
+    "@types/yup": "^0.29.9"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.165",
-    "@types/obelisk.js": "^1.2.0",
-    "@types/yup": "^0.29.9",
-    "babylonjs": "^4.2.0",
     "isomer": "^0.2.6",
-    "joi": "^17.3.0",
     "lodash": "^4.17.20",
-    "obelisk.js": "^1.2.2",
     "yup": "^0.31.0"
   }
 }
