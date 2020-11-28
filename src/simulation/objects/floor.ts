@@ -1,6 +1,6 @@
 // @ts-ignore
 import { Shape, Point } from 'isomer';
-import { normalizeNumber } from '../../simulation/utils/number';
+import { normalizeNumber } from '../utils/number';
 
 export function createFloor(
   iso: any,

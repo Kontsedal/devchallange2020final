@@ -1,7 +1,4 @@
-import {
-  ConfigLineObject,
-  ConfigObjectTypes,
-} from './specification';
+import { ConfigLineObject, ConfigObjectTypes } from './specification';
 
 export const hasWallsCollision = (params: {
   object: ConfigLineObject;
@@ -41,13 +38,13 @@ export const isGonnaFall = (
   target: ConfigLineObject,
   objects: ConfigLineObject[]
 ) => {
-  if(target.options.z === 0) {
-    return false
+  if (target.options.z === 0) {
+    return false;
   }
-  if(getCollisions(target, objects).length) {
-    return false
+  if (getCollisions(target, objects).length) {
+    return false;
   }
-  return !hasFoundationObject(target, objects)
+  return !hasFoundationObject(target, objects);
 };
 
 export const hasFoundationObject = (
@@ -81,17 +78,25 @@ export const hasFoundationObject = (
   return result;
 };
 
-export const getCollisions = (target: ConfigLineObject, objects: ConfigLineObject[]) => {
+export const getCollisions = (
+  target: ConfigLineObject,
+  objects: ConfigLineObject[]
+) => {
   const collisions: ConfigLineObject[] = [];
-  objects.filter(item => item !== target).forEach(obj => {
-    if(hasCollision(target, obj)) {
-      collisions.push(obj)
-    }
-  })
+  objects
+    .filter((item) => item !== target)
+    .forEach((obj) => {
+      if (hasCollision(target, obj)) {
+        collisions.push(obj);
+      }
+    });
   return collisions;
-}
+};
 
-export const hasCollision = (target: ConfigLineObject, object: ConfigLineObject) => {
+export const hasCollision = (
+  target: ConfigLineObject,
+  object: ConfigLineObject
+) => {
   const targetRight = target.options.x + target.options.width;
   const targetDepth = target.options.y + target.options.length;
   const targetHeight = target.options.x + target.options.height;
@@ -99,11 +104,11 @@ export const hasCollision = (target: ConfigLineObject, object: ConfigLineObject)
   const objectDepth = object.options.y + object.options.length;
   const objectHeight = object.options.z + object.options.height;
   return !(
-      target.options.x >= objectRight ||
-      target.options.y >= objectDepth ||
-      targetRight <= object.options.x ||
-      targetDepth <= object.options.y ||
-      target.options.z >= objectHeight ||
-      targetHeight <= object.options.z
-  )
-}
+    target.options.x >= objectRight ||
+    target.options.y >= objectDepth ||
+    targetRight <= object.options.x ||
+    targetDepth <= object.options.y ||
+    target.options.z >= objectHeight ||
+    targetHeight <= object.options.z
+  );
+};

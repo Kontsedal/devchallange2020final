@@ -5,12 +5,13 @@ const roomSchema = yup.object().shape({
     width: yup.number().required().positive().integer(),
     height: yup.number().required().positive().integer(),
     length: yup.number().required().positive().integer(),
-  })
+  }),
 });
 
 export enum ConfigObjectTypes {
   CUBOID = 'cuboid',
   PYRAMID = 'square-pyramid',
+  SPHERE = 'sphere',
   ROOM = 'room',
 }
 export type ConfigLineObject = {

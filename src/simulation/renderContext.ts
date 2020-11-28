@@ -1,4 +1,3 @@
-
 export class RenderContext {
   private readonly element: HTMLCanvasElement;
 
@@ -8,7 +7,7 @@ export class RenderContext {
 
   private canvasHeight: number;
 
-  private sizeChangeHandler: (() => void ) | undefined;
+  private sizeChangeHandler: (() => void) | undefined;
 
   constructor(selector: string) {
     this.element = document.querySelector(selector) as HTMLCanvasElement;

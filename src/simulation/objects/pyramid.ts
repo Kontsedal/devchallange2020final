@@ -1,8 +1,8 @@
 // @ts-ignore
 import { Shape, Point, Color } from 'isomer';
-import { normalizeNumber } from '../../simulation/utils/number';
+import { normalizeNumber } from '../utils/number';
 
-export function createCube(
+export function createPyramid(
   iso: any,
   params: {
     width: number;
@@ -13,15 +13,15 @@ export function createCube(
     z: number;
   }
 ) {
-  const color = new Color(30, 204, 164, 0.7);
+  const color = new Color(204, 30, 190, 0.7);
   iso.add(
-    Shape.Prism(
+    Shape.Pyramid(
       new Point(
         normalizeNumber(params.x),
         normalizeNumber(params.y),
         normalizeNumber(params.z)
       ),
-      normalizeNumber(params.width),
+      normalizeNumber(params.length),
       normalizeNumber(params.length),
       normalizeNumber(params.height)
     ),
